@@ -157,7 +157,7 @@ func CashOut(c echo.Context) error {
 	return c.JSON(http.StatusOK, map[string]interface{}{
 		"status":  true,
 		"data":    []string{},
-		"message": "Place Bet Successfully",
+		"message": "Cash Out Successfully",
 	})
 }
 
