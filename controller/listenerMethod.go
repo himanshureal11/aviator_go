@@ -20,7 +20,6 @@ import (
 
 	// "github.com/labstack/gommon/bytes"
 	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 func init() {
@@ -185,7 +184,6 @@ func processCashOutRequest(playerObject structure.CashOutBetData) {
 	if isUserCashout && playerObject.BetNum == "bet1" && playerObject.Cashout != 0 {
 		updateUserWalletAmount(playerObject)
 		// apiUrl := os.Getenv("POST_API_WALLET_URL")
-
 		// betInfo := BetInfo{
 		// 	UserID:    playerObject.UserID,
 		// 	BetAmount: playerObject.Cashout,
@@ -345,13 +343,9 @@ func updateUserWalletAmount(playerObject structure.CashOutBetData) {
 		BetAmount: playerObject.Cashout,
 		BetType:   "win",
 	}
-	userID, err := primitive.ObjectIDFromHex(playerObject.UserID)
-	if err != nil {
-		return
-	}
-	filter := bson.D{{Key: "playerID", Value: userID}}
+	filter := bson.D{{Key: "playerID", Value: playerObject.UserID}}
 	var player structure.Player
-	err = collections.PLAYER_WALLET_AMOUNT.FindOne(context.TODO(), filter).Decode(&player)
+	err := collections.PLAYER_WALLET_AMOUNT.FindOne(context.TODO(), filter).Decode(&player)
 	if err != nil {
 		return
 	}
