@@ -92,7 +92,7 @@ func processBetRequest(betData structure.BetData) {
 		fmt.Println("Error unmarshaling JSON:", constant.RED(err.Error()))
 		return
 	}
-	playerData, err := findPlayerInRoom(roomDetails.PlayerInRoom, betData.PlayerID)
+	playerData, err := findPlayerInRoom(roomDetails.PlayerInRoom, betData.PlayerID, false)
 	if err != nil {
 		fmt.Println("Error:", constant.RED(err.Error()))
 		return
@@ -106,10 +106,14 @@ func processBetRequest(betData structure.BetData) {
 	updatePlayerInRoom(roomDetails, playerData, key)
 }
 
-func findPlayerInRoom(people []structure.PlayerData, playerId string) (structure.PlayerData, error) {
+func findPlayerInRoom(people []structure.PlayerData, playerId string, cashout bool) (structure.PlayerData, error) {
 	for _, p := range people {
 		if p.PlayerID == playerId {
-			requestQue = requestQue[1:]
+			if cashout {
+				cashOutQue = cashOutQue[1:]
+			} else {
+				requestQue = requestQue[1:]
+			}
 			return p, nil
 		}
 	}
@@ -172,7 +176,7 @@ func processCashOutRequest(playerObject structure.CashOutBetData) {
 		log.Println(constant.RED(err.Error()))
 		return
 	}
-	playerData, err := findPlayerInRoom(roomDetails.PlayerInRoom, playerObject.UserID)
+	playerData, err := findPlayerInRoom(roomDetails.PlayerInRoom, playerObject.UserID, true)
 	if err != nil {
 		log.Println(constant.RED(err.Error()))
 		return
