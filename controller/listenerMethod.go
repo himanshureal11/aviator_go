@@ -138,9 +138,6 @@ func updatePlayerInRoom(roomDetails structure.RoomDetails, playerData structure.
 	jsonString := string(jsonData)
 	if err := configs.SetString(key, jsonString); err != nil {
 		fmt.Println("Error:", constant.RED(err.Error()))
-	} else {
-		fmt.Println("Bet Placed Successfully")
-		return
 	}
 }
 
