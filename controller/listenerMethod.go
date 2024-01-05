@@ -31,6 +31,7 @@ func init() {
 
 var requestQue = []structure.BetData{}
 var cashOutQue = []structure.CashOutBetData{}
+var thresholdValue float64
 
 type Headers struct {
 	Authorization string `json:"Authorization"`
@@ -151,9 +152,10 @@ func CashOut(c echo.Context) error {
 	cashOutQue = append(cashOutQue, requestBody)
 	processCashOutQue()
 	return c.JSON(http.StatusOK, map[string]interface{}{
-		"status":  true,
-		"data":    []string{},
-		"message": "Cash Out Successfully",
+		"status":          true,
+		"data":            []string{},
+		"threshold_value": thresholdValue,
+		"message":         "Cash Out Successfully",
 	})
 }
 
@@ -248,6 +250,7 @@ func threshold(roomId string, cashout float64, roomDetails structure.RoomDetails
 		}
 		res := playersInRoomArrayReduce(roomDetail.PlayerInRoom)
 		var distributedAmount = 0.8 * res.totalBetAmount
+		thresholdValue = (distributedAmount - res.totalCashoutAmount) / res.maxAmount
 		if distributedAmount < res.totalCashoutAmount {
 			return false
 		} else {
