@@ -57,6 +57,13 @@ type reduceResult struct {
 	totalCashoutAmount float64
 }
 
+var response = map[string]any{
+	"status":          true,
+	"data":            []string{},
+	"threshold_value": thresholdValue,
+	"message":         "Cash Out Successfully",
+}
+
 /* <----------------- PLACE BET ---------------------> */
 func PlaceBet(c echo.Context) error {
 	var requestBody structure.BetData
@@ -151,12 +158,7 @@ func CashOut(c echo.Context) error {
 	}
 	cashOutQue = append(cashOutQue, requestBody)
 	processCashOutQue()
-	return c.JSON(http.StatusOK, map[string]interface{}{
-		"status":          true,
-		"data":            []string{},
-		"threshold_value": thresholdValue,
-		"message":         "Cash Out Successfully",
-	})
+	return c.JSON(http.StatusOK, response)
 }
 
 func processCashOutQue() {
@@ -182,45 +184,6 @@ func processCashOutRequest(playerObject structure.CashOutBetData) {
 	isUserCashout := threshold(playerObject.RoomID, playerObject.Cashout, roomDetails, playerData, playerObject, key)
 	if isUserCashout && playerObject.BetNum == "bet1" && playerObject.Cashout != 0 {
 		updateUserWalletAmount(playerObject)
-		// apiUrl := os.Getenv("POST_API_WALLET_URL")
-		// betInfo := BetInfo{
-		// 	UserID:    playerObject.UserID,
-		// 	BetAmount: playerObject.Cashout,
-		// 	BetType:   "win",
-		// }
-		// userID, err := primitive.ObjectIDFromHex(playerObject.UserID)
-		// if err != nil {
-		// 	return
-		// }
-		// filter := bson.D{{Key: "playerID", Value: userID}}
-		// var player structure.Player
-		// err = collections.PLAYER_WALLET_AMOUNT.FindOne(context.TODO(), filter).Decode(&player)
-		// if err != nil {
-		// 	return
-		// }
-		// var authToken = player.AuthToken
-		// postWalletData, err := postWalletAmount(apiUrl, betInfo, authToken)
-		// if err != nil {
-		// 	fmt.Println(err)
-		// 	return
-		// }
-		// if postWalletData.Data.Rewards != "" || postWalletData.Data.Winning != "" {
-		// 	winning, err := strconv.ParseFloat(postWalletData.Data.Winning, 64)
-		// 	if err != nil {
-		// 		fmt.Println("Error parsing winning:", err)
-		// 		return
-		// 	}
-		// 	rewards, err := strconv.ParseFloat(postWalletData.Data.Rewards, 64)
-		// 	if err != nil {
-		// 		fmt.Println("Error parsing rewards:", err)
-		// 		return
-		// 	}
-		// 	update := bson.M{"$set": bson.M{"walletAmount": rewards + winning}}
-		// 	_, err = collections.PLAYER_WALLET_AMOUNT.UpdateOne(context.TODO(), filter, update)
-		// 	if err != nil {
-		// 		log.Fatal(err)
-		// 	}
-		// }
 	}
 	if isUserCashout && playerObject.BetNum == "bet2" && playerObject.Cashout != 0 {
 		updateUserWalletAmount(playerObject)
@@ -252,6 +215,7 @@ func threshold(roomId string, cashout float64, roomDetails structure.RoomDetails
 		var distributedAmount = 0.8 * res.totalBetAmount
 		thresholdValue = (distributedAmount - res.totalCashoutAmount) / res.maxAmount
 		if distributedAmount < res.totalCashoutAmount {
+			response["status"] = false
 			return false
 		} else {
 			return true
