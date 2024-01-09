@@ -30,7 +30,7 @@ type RoomDetails struct {
 	PlayerInRoom        []PlayerData `json:"PlayerInRoom"`
 	WaitingPlayerInRoom []string     `json:"WaitingPlayerInRoom"`
 	GameStatus          string       `json:"gameStatus"`
-	IsGameStarted       string       `json:"isGameStarted"`
+	IsGameStarted       bool         `json:"isGameStarted"`
 	RoomID              string       `json:"roomID"`
 	RoomStatus          string       `json:"roomStatus"`
 }

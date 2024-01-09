@@ -196,6 +196,7 @@ func processCashOutRequest(playerObject structure.CashOutBetData) {
 	key := fmt.Sprintf("%s:%s", constant.AVIATOR_ROOM, playerObject.RoomID)
 	result, err := configs.GetString(key)
 	fmt.Println(">>>>>>result", result)
+
 	var roomDetails structure.RoomDetails
 	err = json.Unmarshal([]byte(result), &roomDetails)
 	if err != nil {
