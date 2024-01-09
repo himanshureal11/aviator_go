@@ -100,6 +100,7 @@ func processBetQue(que *[]structure.BetData) {
 func processBetRequest(betData structure.BetData) {
 	key := fmt.Sprintf("%s:%s", constant.AVIATOR_ROOM, betData.RoomID)
 	result, err := configs.GetString(key)
+	fmt.Println(">>>>>>result", result)
 	if err != nil {
 		log.Println("Error At process")
 		return
@@ -194,6 +195,7 @@ func processCashOutQue() {
 func processCashOutRequest(playerObject structure.CashOutBetData) {
 	key := fmt.Sprintf("%s:%s", constant.AVIATOR_ROOM, playerObject.RoomID)
 	result, err := configs.GetString(key)
+	fmt.Println(">>>>>>result", result)
 	var roomDetails structure.RoomDetails
 	err = json.Unmarshal([]byte(result), &roomDetails)
 	if err != nil {
