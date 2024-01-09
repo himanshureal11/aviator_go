@@ -11,7 +11,7 @@ func main() {
 	e := echo.New()
 	e.Use(requestLogger)
 	InitializeRoutes(e)
-	e.Start(":5050")
+	e.Logger.Fatal(e.Start(":5050"))
 }
 
 func requestLogger(next echo.HandlerFunc) echo.HandlerFunc {

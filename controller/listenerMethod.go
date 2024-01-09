@@ -152,10 +152,23 @@ func updatePlayerInRoom(roomDetails structure.RoomDetails, playerData structure.
 /* <----------------- CASH OUT ---------------------> */
 
 func CashOut(c echo.Context) error {
+	// Log the request body content
+	body, err := ioutil.ReadAll(c.Request().Body)
+	if err != nil {
+		// Handle the error if needed
+		fmt.Println("Error reading request body:", err)
+	} else {
+		fmt.Println("Request Body:", body, string(body))
+	}
+	newRequest := c.Request().WithContext(c.Request().Context())
+	newRequest.Body = ioutil.NopCloser(bytes.NewReader(body))
+	c.SetRequest(newRequest)
 	var requestBody structure.CashOutBetData
 	if err := c.Bind(&requestBody); err != nil {
+		fmt.Println(">>>>err", err.Error())
 		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Bad Request"})
 	}
+
 	cashOutQue = append(cashOutQue, requestBody)
 	processCashOutQue()
 	return c.JSON(http.StatusOK, response)
